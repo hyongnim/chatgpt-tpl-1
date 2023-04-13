@@ -1,0 +1,88 @@
+<style lang="scss">
+.chat-list {
+  padding: 0;
+  margin: 0;
+  .avatar {
+    display: block;
+    $size: 40px;
+    width: $size;
+    height: $size;
+    border-radius: 100px;
+  }
+  .chat-item {
+    .chat-msg {
+      padding: 10px 12px;
+      max-width: 400px;
+      line-height: 1.3;
+      position: relative;
+      &::after {
+        content: "";
+        position: absolute;
+        top: 16px;
+        transform: rotate(45deg);
+        padding: 5px;
+        border-radius: 2px;
+      }
+    }
+    &.isme {
+      justify-content: end;
+      .chat-msg {
+        margin-left: 50px;
+        background: #fff;
+        color: #666;
+        &::after {
+          right: -4px;
+          background: #fff;
+        }
+      }
+    }
+    &.notme {
+      .chat-msg {
+        background: #775da6;
+        color: #fff;
+        margin-right: 50px;
+        &::after {
+          left: -4px;
+          background: #775da6;
+        }
+      }
+    }
+  }
+}
+</style>
+
+<template>
+  <ul class="chat-list">
+    <li
+      class="d-flex mb-3 chat-item"
+      :class="it.isMe ? 'isme' : 'notme'"
+      v-for="(it, i) in chatList"
+      :key="i"
+    >
+      <img v-if="!it.isMe" src="img/logo-ai.jpg" class="avatar" />
+      <div class="m-3 mt-0 bdrs-3 chat-msg">
+        <div v-html="it.msg"></div>
+      </div>
+      <img v-if="it.isMe" src="img/logo-me.jpg" class="avatar" />
+    </li>
+  </ul>
+</template>
+
+<script>
+export default {
+  props: {
+    list: Array,
+  },
+  computed: {
+    chatList() {
+      return this.list.map((it) => {
+        return {
+          ...it,
+          isMe: it.role == "user",
+          msg: it.content.replace(/\n/gm, "<br/>"),
+        };
+      });
+    },
+  },
+};
+</script>
