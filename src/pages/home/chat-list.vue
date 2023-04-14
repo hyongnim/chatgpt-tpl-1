@@ -4,7 +4,7 @@
   margin: 0;
   .avatar {
     display: block;
-    $size: 38px;
+    $size: 40px;
     width: $size;
     height: $size;
     border-radius: 100px;
@@ -13,9 +13,9 @@
     .chat-msg {
       padding: 10px 12px;
       max-width: 400px;
-      line-height: 1.3;
       position: relative;
       font-size: 14px;
+      line-height: 1.4;
       &::after {
         content: "";
         position: absolute;

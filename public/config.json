@@ -1,0 +1,34 @@
+{
+  "Page Title": [
+    {
+      "type": "text",
+      "key": "title",
+      "value": "",
+      "placeholder": "Enter Page title"
+    }
+  ],
+  "OpenAI ApiKey": [
+    {
+      "type": "text",
+      "key": "apiKey",
+      "value": "",
+      "placeholder": "Enter OpenAI ApiKey"
+    }
+  ],
+  "AI Avatar": [
+    {
+      "type": "text",
+      "key": "ai_avatar",
+      "value": "",
+      "placeholder": "Enter AI Avatar URL"
+    }
+  ],
+  "User Avatar": [
+    {
+      "type": "text",
+      "key": "user_avatar",
+      "value": "",
+      "placeholder": "Enter User Avatar URL"
+    }
+  ]
+}

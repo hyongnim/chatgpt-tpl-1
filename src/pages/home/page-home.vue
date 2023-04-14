@@ -40,13 +40,21 @@
         </div>
       </div>
     </div>
-    <div class="flex-1 ov-a" ref="chatList">
+    <div class="flex-1 ov-a" ref="chatList" @scroll="onScroll">
       <div class="chat-wrap">
         <chat-list :list="comboList"></chat-list>
       </div>
     </div>
-    <div>
-      <div class="chat-wrap" style="padding-top: 0">
+    <div class="">
+      <div class="chat-wrap pos-r" style="padding-top: 0">
+        <div
+          class="pos-a right-0 mr-3 pa-3 hover-1"
+          style="top: -56px"
+          v-if="!isBtm"
+          @click="smoothToBtm"
+        >
+          <img src="img/to-btm.svg" width="30" />
+        </div>
         <div class="d-flex al-c bg-white pa-2 bdrs-5">
           <input
             class="flex-1 chat-input"
@@ -83,6 +91,7 @@ export default {
       msgList: JSON.parse(localStorage.msgList || "[]"),
       lastMsg: "",
       streaming: false,
+      isBtm: true,
     };
   },
   computed: {
@@ -101,20 +110,18 @@ export default {
       return this.msgList;
     },
   },
-  watch: {
-    comboList() {
-      this.$nextTick(() => {
-        this.smoothToBtm();
-      });
-    },
-  },
+  watch: {},
   mounted() {
     setTimeout(() => {
       if (this.msgList.length) this.smoothToBtm(0);
     }, 200);
   },
   methods: {
-    smoothToBtm(delay = 300) {
+    onScroll(e) {
+      this.isBtm =
+        e.target.scrollTop >= e.target.scrollHeight - e.target.offsetHeight;
+    },
+    smoothToBtm(delay = 300, behavior = "smooth") {
       const el = this.$refs.chatList;
       if (!delay) {
         el.scrollTo({
@@ -126,13 +133,14 @@ export default {
         console.log("to btm");
         el.scrollTo({
           top: el.scrollHeight,
-          behavior: "smooth",
+          behavior,
         });
       }, delay)();
     },
     onSend() {
       let msg = this.inputMsg.trim();
       if (!msg) return;
+      this.isBtm = true;
       this.inputMsg = "";
       this.pushMsg(msg);
       this.smoothToBtm(30);
@@ -152,6 +160,10 @@ export default {
             // console.log(json);
             const text = json.choices[0].delta?.content || "";
             this.lastMsg = this.lastMsg + text;
+            if (this.isBtm)
+              this.$nextTick(() => {
+                this.smoothToBtm(0);
+              });
           } else {
             this.pushMsg(this.lastMsg, "assistant");
             this.lastMsg = "";
