@@ -4,7 +4,7 @@
   margin: 0;
   .avatar {
     display: block;
-    $size: 40px;
+    $size: 38px;
     width: $size;
     height: $size;
     border-radius: 100px;
@@ -15,6 +15,7 @@
       max-width: 400px;
       line-height: 1.3;
       position: relative;
+      font-size: 14px;
       &::after {
         content: "";
         position: absolute;

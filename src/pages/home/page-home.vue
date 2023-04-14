@@ -31,16 +31,8 @@
   <div class="h-flex vh100 bg-chat">
     <div class="bg-white">
       <div class="chat-wrap pt-3 pb-3">
-        <div
-          :class="{
-            'al-c': asMobile,
-          }"
-        >
-          <img
-            src="img/avatar.svg"
-            width="40"
-            :class="asMobile ? 'mr-2' : 'mb-2'"
-          />
+        <div class="al-c">
+          <img src="img/logo-ai.jpg" width="40" class="mr-3 bdrs-100" />
           <div>
             <h2 class="fz-16">ChatGPT Demo</h2>
             <p class="gray fz-13">Based on OpenAI API (gpt-3.5-turbo).</p>
