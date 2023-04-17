@@ -121,6 +121,8 @@ import { mapState } from "vuex";
 import { SSE } from "sse";
 import ChatList from "./chat-list.vue";
 import { throttle } from "../../utils/timer";
+// import markdownIt from "markdown-it";
+// import mdHighlight from 'markdown-it-highlightjs'
 
 export default {
   components: {
@@ -222,7 +224,7 @@ export default {
     onPost() {
       try {
         this.streaming = true;
-        const body = this.getPayload(this.apiKey, this.msgList);
+        const body = this.getPayload(this.apiKey, this.msgList.slice(-10));
         const source = new SSE(
           "https://api.openai.com/v1/chat/completions",
           body

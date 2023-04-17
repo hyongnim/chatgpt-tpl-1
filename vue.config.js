@@ -1,4 +1,5 @@
 const { defineConfig } = require("@vue/cli-service");
+// const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 module.exports = defineConfig({
   transpileDependencies: ["vuetify"],
@@ -10,4 +11,7 @@ module.exports = defineConfig({
     port: 8080,
     open: true,
   },
+  // configureWebpack: {
+  //   plugins: [new NodePolyfillPlugin()],
+  // },
 });
