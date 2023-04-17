@@ -96,7 +96,9 @@
         }"
       >
         <div class="chat-wrap">
-          <div class="fz-14 mb-2 gray">OpenAI apiKey:</div>
+          <div class="fz-14 mb-2 gray">
+            OpenAI apiKey (Stored in localStorage)
+          </div>
           <div class="d-flex">
             <textarea
               v-model="newApiKey"
@@ -180,7 +182,8 @@ export default {
     },
     onScroll(e) {
       this.isBtm =
-        e.target.scrollTop >= e.target.scrollHeight - e.target.offsetHeight;
+        e.target.scrollTop >=
+        e.target.scrollHeight - e.target.offsetHeight - 40;
     },
     smoothToBtm(delay = 300, behavior = "smooth") {
       const el = this.$refs.chatList;
@@ -207,9 +210,14 @@ export default {
       if (!msg) return;
       this.isBtm = true;
       this.inputMsg = "";
-      this.pushMsg(msg);
-      this.smoothToBtm(30);
-      this.onPost();
+      if (this.lastSource) {
+        this.lastSource.close();
+      }
+      setTimeout(() => {
+        this.pushMsg(msg);
+        this.smoothToBtm(30);
+        this.onPost();
+      }, 10);
     },
     onPost() {
       try {
@@ -232,16 +240,32 @@ export default {
           }
         });
         source.addEventListener("error", (e) => {
-          const data = JSON.parse(e.data);
-          this.pushMsg(data.error.message, "assistant");
-          this.streaming = false;
-          this.smoothToBtm(30);
+          console.log(e);
+          let msg = "Network Error";
+          if (e.data) {
+            const data = JSON.parse(e.data);
+            msg = data.error.message;
+          }
+          this.onErr(msg);
+        });
+        source.addEventListener("abort", () => {
+          let msg = this.lastMsg;
+          if (msg) msg += "...\n\n";
+          msg += "Aborted";
+          this.onErr(msg);
         });
         source.stream();
+        this.lastSource = source;
       } catch (error) {
         console.log(error);
-        this.streaming = false;
+        this.onErr(error.message);
       }
+    },
+    onErr(msg) {
+      this.pushMsg(msg, "assistant");
+      this.streaming = false;
+      this.lastMsg = "";
+      this.smoothToBtm(30);
     },
     pushMsg(content, role = "user") {
       this.msgList.push({
