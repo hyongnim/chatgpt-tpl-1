@@ -6,6 +6,13 @@
   max-width: 700px;
   margin: 0 auto;
   padding: 20px;
+  a {
+    text-decoration: none;
+    line-height: 1;
+  }
+  .bdr-1 {
+    border-right: 1px solid;
+  }
 }
 .chat-input {
   border: none;
@@ -85,6 +92,20 @@
               <img src="img/clean.svg" width="20" class="d-b" />
             </div>
           </div>
+          <div class="mt-2">
+            <a
+              :href="it.link"
+              target="_blank"
+              class="mr-3 d-ib fz-13 white"
+              :class="{
+                'pr-3 bdr-1': i < links.length - 1,
+              }"
+              v-for="(it, i) in links"
+              :key="i"
+            >
+              {{ it.text }}
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -154,6 +175,29 @@ export default {
     }),
     logo() {
       return this.info.avatarAi || "img/logo-ai.jpg";
+    },
+    links() {
+      const lists = [
+        {
+          text: "Source code",
+          link: "https://github.com/saullary/chatgpt-tpl",
+        },
+        {
+          text: "Deploy with 4everland",
+          link: "https://www.4everland.org",
+        },
+        {
+          text: "Based on OpenAI",
+          link: "https://openai.com/",
+        },
+      ];
+      if (this.info.userName) {
+        lists.unshift({
+          text: "Made by " + this.info.userName,
+          link: this.info.userLink || "javascript:void()",
+        });
+      }
+      return lists;
     },
     comboList() {
       if (this.lastMsg || this.streaming)

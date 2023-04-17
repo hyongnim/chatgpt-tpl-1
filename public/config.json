@@ -4,7 +4,19 @@
       "type": "text",
       "key": "title",
       "value": "",
-      "placeholder": "Enter Page title"
+      "placeholder": "Enter page title"
+    },
+    {
+      "type": "text",
+      "key": "userName",
+      "value": "",
+      "placeholder": "Enter your name"
+    },
+    {
+      "type": "text",
+      "key": "userLink",
+      "value": "",
+      "placeholder": "Enter your personal Link"
     }
   ],
   "OpenAI ApiKey": [
@@ -20,13 +32,13 @@
       "type": "text",
       "key": "avatarAi",
       "value": "",
-      "placeholder": "Enter AI Avatar URL"
+      "placeholder": "Enter AI avatar URL"
     },
     {
       "type": "text",
       "key": "avatarUser",
       "value": "",
-      "placeholder": "Enter User Avatar URL"
+      "placeholder": "Enter user avatar URL"
     }
   ]
 }
