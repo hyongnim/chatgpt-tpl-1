@@ -12,12 +12,14 @@
   outline: none;
   background: #f7f9fb;
   padding: 9px 10px;
-  font-size: 16px;
+  // font-size: 16px;
+  word-break: break-all;
 }
 .chat-btn {
   border: none;
   outline: none;
-  padding: 10px 20px;
+  padding: 10px 15px;
+  border-radius: 3px;
   background: #775da6;
   color: #fff;
   cursor: pointer;
@@ -28,44 +30,83 @@
 </style>
 
 <template>
-  <div class="h-flex vh100 bg-chat">
-    <div class="bg-white">
-      <div class="chat-wrap pt-3 pb-3">
-        <div class="al-c">
-          <img src="img/logo-ai.jpg" width="40" class="mr-3 bdrs-100" />
-          <div>
-            <h2 class="fz-16">ChatGPT Demo</h2>
-            <p class="gray fz-13">Based on OpenAI API (gpt-3.5-turbo).</p>
+  <div>
+    <div class="h-flex vh100 bg-chat">
+      <div class="bg-white">
+        <div class="chat-wrap pt-3 pb-3 pos-r">
+          <div class="al-c">
+            <img src="img/logo-ai.jpg" width="40" class="mr-3 bdrs-100" />
+            <div>
+              <h2 class="fz-16">ChatGPT Demo</h2>
+              <p class="gray fz-13">Based on OpenAI API (gpt-3.5-turbo).</p>
+            </div>
+            <div class="ml-auto">
+              <img
+                src="img/key.svg"
+                width="22"
+                class="d-b hover-1"
+                @click="showSetting = true"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex-1 ov-a" ref="chatList" @scroll="onScroll">
+        <div class="chat-wrap">
+          <chat-list :list="comboList"></chat-list>
+        </div>
+      </div>
+      <div class="">
+        <div class="chat-wrap pos-r" style="padding-top: 0">
+          <div
+            class="pos-a right-0 mr-3 pa-3 hover-1"
+            style="top: -56px"
+            v-if="!isBtm"
+            @click="smoothToBtm"
+          >
+            <img src="img/to-btm.svg" width="30" />
+          </div>
+          <div class="d-flex al-c bg-white pa-2 bdrs-5">
+            <input
+              class="flex-1 chat-input fz-16"
+              type="text"
+              placeholder="Enter something..."
+              v-model="inputMsg"
+              @keyup.enter="onSend"
+            />
+            <button class="chat-btn ml-3" @click="onSend">Send</button>
+            <div class="pa-2 ml-1 hover-1" @click="onClear">
+              <img src="img/clean.svg" width="20" class="d-b" />
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="flex-1 ov-a" ref="chatList" @scroll="onScroll">
-      <div class="chat-wrap">
-        <chat-list :list="comboList"></chat-list>
-      </div>
-    </div>
-    <div class="">
-      <div class="chat-wrap pos-r" style="padding-top: 0">
-        <div
-          class="pos-a right-0 mr-3 pa-3 hover-1"
-          style="top: -56px"
-          v-if="!isBtm"
-          @click="smoothToBtm"
-        >
-          <img src="img/to-btm.svg" width="30" />
-        </div>
-        <div class="d-flex al-c bg-white pa-2 bdrs-5">
-          <input
-            class="flex-1 chat-input"
-            type="text"
-            placeholder="Enter something..."
-            v-model="inputMsg"
-            @keyup.enter="onSend"
-          />
-          <button class="chat-btn bdrs-3 ml-3" @click="onSend">Send</button>
-          <div class="pa-2 ml-1 hover-1" @click="onClear">
-            <img src="img/clean.svg" width="20" class="d-b" />
+    <div
+      class="pos-mask trans-200"
+      :class="{
+        'op-0 ev-n': !showSetting,
+      }"
+    >
+      <div class="pos-mask bg-black-3" @click="showSetting = false"></div>
+      <div
+        class="pos-a top-0 w100p z-100 bg-white trans-200"
+        :class="{
+          'up-close': !showSetting,
+        }"
+      >
+        <div class="chat-wrap">
+          <div class="fz-14 mb-2 gray">OpenAI apiKey:</div>
+          <div class="d-flex">
+            <textarea
+              v-model="newApiKey"
+              @keyup.enter="onNewApiKey"
+              type="text"
+              rows="3"
+              class="chat-input flex-1"
+              placeholder="sk-******"
+            />
+            <button class="chat-btn ml-2" @click="onNewApiKey">OK</button>
           </div>
         </div>
       </div>
@@ -79,19 +120,22 @@ import { SSE } from "sse";
 import ChatList from "./chat-list.vue";
 import { throttle } from "../../utils/timer";
 
-const apiKey = process.env.VUE_APP_OPENAI_API_KEY;
-
 export default {
   components: {
     ChatList,
   },
   data() {
+    const apiKey =
+      localStorage.apiKey || process.env.VUE_APP_OPENAI_API_KEY || "";
     return {
       inputMsg: "",
+      apiKey,
+      newApiKey: apiKey,
       msgList: JSON.parse(localStorage.msgList || "[]"),
       lastMsg: "",
       streaming: false,
       isBtm: true,
+      showSetting: false,
     };
   },
   computed: {
@@ -110,13 +154,30 @@ export default {
       return this.msgList;
     },
   },
-  watch: {},
+  watch: {
+    lastMsg() {
+      if (this.isBtm) {
+        this.$nextTick(() => {
+          this.smoothToBtm(0);
+        });
+      }
+    },
+  },
   mounted() {
     setTimeout(() => {
       if (this.msgList.length) this.smoothToBtm(0);
     }, 200);
   },
   methods: {
+    onNewApiKey() {
+      if (!/^sk-\w{48}$/.test(this.newApiKey)) {
+        window.alert("malformed api key");
+        return;
+      }
+      this.apiKey = this.newApiKey;
+      localStorage.apiKey = this.apiKey;
+      this.showSetting = false;
+    },
     onScroll(e) {
       this.isBtm =
         e.target.scrollTop >= e.target.scrollHeight - e.target.offsetHeight;
@@ -138,6 +199,10 @@ export default {
       }, delay)();
     },
     onSend() {
+      if (!this.apiKey) {
+        this.showSetting = true;
+        return;
+      }
       let msg = this.inputMsg.trim();
       if (!msg) return;
       this.isBtm = true;
@@ -149,26 +214,28 @@ export default {
     onPost() {
       try {
         this.streaming = true;
-        const body = this.getPayload(apiKey, this.msgList);
+        const body = this.getPayload(this.apiKey, this.msgList);
         const source = new SSE(
           "https://api.openai.com/v1/chat/completions",
           body
         );
-        source.addEventListener("message", ({ data }) => {
-          if (data != "[DONE]") {
-            const json = JSON.parse(data);
+        source.addEventListener("message", (e) => {
+          if (e.data != "[DONE]") {
+            const json = JSON.parse(e.data);
             // console.log(json);
             const text = json.choices[0].delta?.content || "";
             this.lastMsg = this.lastMsg + text;
-            if (this.isBtm)
-              this.$nextTick(() => {
-                this.smoothToBtm(0);
-              });
           } else {
             this.pushMsg(this.lastMsg, "assistant");
             this.lastMsg = "";
             this.streaming = false;
           }
+        });
+        source.addEventListener("error", (e) => {
+          const data = JSON.parse(e.data);
+          this.pushMsg(data.error.message, "assistant");
+          this.streaming = false;
+          this.smoothToBtm(30);
         });
         source.stream();
       } catch (error) {

@@ -16,6 +16,7 @@
       position: relative;
       font-size: 14px;
       line-height: 1.4;
+      word-break: break-all;
       &::after {
         content: "";
         position: absolute;

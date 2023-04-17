@@ -7,6 +7,9 @@
 .up-down {
   transform: rotateX(180deg);
 }
+.up-close {
+  transform: translateY(-100%);
+}
 
 .anim-show {
   animation: anim_show 100ms linear infinite;
