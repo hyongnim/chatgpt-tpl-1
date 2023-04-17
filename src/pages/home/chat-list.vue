@@ -61,11 +61,11 @@
       v-for="(it, i) in chatList"
       :key="i"
     >
-      <img v-if="!it.isMe" src="img/logo-ai.jpg" class="avatar" />
+      <img v-if="!it.isMe" :src="logo" class="avatar" />
       <div class="m-3 mt-0 bdrs-3 chat-msg">
         <div v-html="it.msg"></div>
       </div>
-      <img v-if="it.isMe" src="img/logo-me.jpg" class="avatar" />
+      <img v-if="it.isMe" :src="avatar" class="avatar" />
     </li>
   </ul>
 </template>
@@ -74,6 +74,8 @@
 export default {
   props: {
     list: Array,
+    logo: String,
+    avatar: String,
   },
   computed: {
     chatList() {

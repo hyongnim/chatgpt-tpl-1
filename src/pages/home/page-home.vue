@@ -35,10 +35,12 @@
       <div class="bg-white">
         <div class="chat-wrap pt-3 pb-3 pos-r">
           <div class="al-c">
-            <img src="img/logo-ai.jpg" width="40" class="mr-3 bdrs-100" />
+            <img :src="logo" width="40" class="mr-3 bdrs-100" />
             <div>
-              <h2 class="fz-16">ChatGPT Demo</h2>
-              <p class="gray fz-13">Based on OpenAI API (gpt-3.5-turbo).</p>
+              <h2 class="fz-16">{{ info.title || "ChatGPT Demo" }}</h2>
+              <p class="gray fz-13">
+                {{ info.desc || "Based on OpenAI API (gpt-3.5-turbo)." }}
+              </p>
             </div>
             <div class="ml-auto">
               <img
@@ -53,7 +55,11 @@
       </div>
       <div class="flex-1 ov-a" ref="chatList" @scroll="onScroll">
         <div class="chat-wrap">
-          <chat-list :list="comboList"></chat-list>
+          <chat-list
+            :list="comboList"
+            :logo="logo"
+            :avatar="info.avatarUser || 'img/avatar.jpg'"
+          ></chat-list>
         </div>
       </div>
       <div class="">
@@ -121,6 +127,7 @@ import { mapState } from "vuex";
 import { SSE } from "sse";
 import ChatList from "./chat-list.vue";
 import { throttle } from "../../utils/timer";
+import Axios from "axios";
 
 export default {
   components: {
@@ -131,6 +138,7 @@ export default {
       localStorage.apiKey || process.env.VUE_APP_OPENAI_API_KEY || "";
     return {
       inputMsg: "",
+      info: {},
       apiKey,
       newApiKey: apiKey,
       msgList: JSON.parse(localStorage.msgList || "[]"),
@@ -144,6 +152,9 @@ export default {
     ...mapState({
       asMobile: (s) => s.asMobile,
     }),
+    logo() {
+      return this.info.avatarAi || "img/logo-ai.jpg";
+    },
     comboList() {
       if (this.lastMsg || this.streaming)
         return [
@@ -164,20 +175,45 @@ export default {
         });
       }
     },
+    apiKey() {
+      localStorage.apiKey = this.apiKey;
+    },
   },
   mounted() {
     setTimeout(() => {
       if (this.msgList.length) this.smoothToBtm(0);
     }, 200);
+    this.getConfig();
   },
   methods: {
+    async getConfig() {
+      try {
+        const { data } = await Axios.get("./config.json");
+        const info = {};
+        for (const key in data) {
+          const arr = data[key];
+          for (const row of arr) {
+            info[row.key] = row.value;
+          }
+        }
+        console.log(info);
+        this.info = info;
+        if (info.apiKey) {
+          this.apiKey = info.apiKey;
+        }
+        if (info.title) {
+          document.title = info.title;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
     onNewApiKey() {
       if (!/^sk-\w{48}$/.test(this.newApiKey)) {
         window.alert("malformed api key");
         return;
       }
       this.apiKey = this.newApiKey;
-      localStorage.apiKey = this.apiKey;
       this.showSetting = false;
     },
     onScroll(e) {
