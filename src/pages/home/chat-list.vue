@@ -4,17 +4,25 @@
   margin: 0;
   pre {
     white-space: pre-wrap;
+    tab-size: 2;
   }
   .chat-item {
     .chat-msg {
       padding: 10px 12px;
-      max-width: 400px;
+      max-width: 460px;
       position: relative;
-      font-size: 14px;
-      line-height: 1.4;
-      word-break: break-all;
+      font-size: 13px;
+      line-height: 1.6;
+      word-break: break-word;
       a {
         color: #61b0ff;
+      }
+      ol {
+        padding: 15px 30px;
+        padding-right: 10px;
+        li {
+          margin-bottom: 10px;
+        }
       }
       &::after {
         content: "";
