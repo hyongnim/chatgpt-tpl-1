@@ -15,10 +15,9 @@
       line-height: 1.6;
       word-break: break-word;
       ol {
-        padding: 15px 30px;
-        padding-right: 10px;
+        padding: 5px 10px 15px 30px;
         li {
-          margin-bottom: 10px;
+          margin-top: 10px;
         }
       }
       &::after {
