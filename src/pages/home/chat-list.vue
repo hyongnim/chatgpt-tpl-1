@@ -2,12 +2,8 @@
 .chat-list {
   padding: 0;
   margin: 0;
-  .avatar {
-    display: block;
-    $size: 40px;
-    width: $size;
-    height: $size;
-    border-radius: 100px;
+  pre {
+    white-space: pre-wrap;
   }
   .chat-item {
     .chat-msg {
@@ -17,6 +13,9 @@
       font-size: 14px;
       line-height: 1.4;
       word-break: break-all;
+      a {
+        color: #61b0ff;
+      }
       &::after {
         content: "";
         position: absolute;
@@ -71,6 +70,15 @@
 </template>
 
 <script>
+import MarkdownIt from "markdown-it/lib";
+import Highlight from "markdown-it-highlightjs";
+import "highlight.js";
+
+const md = MarkdownIt({
+  linkify: true,
+  breaks: true,
+}).use(Highlight);
+
 export default {
   props: {
     list: Array,
@@ -83,7 +91,7 @@ export default {
         return {
           ...it,
           isMe: it.role == "user",
-          msg: it.content.replace(/\n/gm, "<br/>"),
+          msg: md.render(it.content), //.replace(/\n/gm, "<br/>")
         };
       });
     },

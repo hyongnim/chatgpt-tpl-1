@@ -14,6 +14,14 @@
     border-right: 1px solid;
   }
 }
+.avatar {
+  display: block;
+  $size: 40px;
+  width: $size;
+  height: $size;
+  border-radius: 100px;
+  object-fit: cover;
+}
 .chat-input {
   border: none;
   outline: none;
@@ -42,7 +50,7 @@
       <div class="bg-white">
         <div class="chat-wrap pt-3 pb-3 pos-r">
           <div class="al-c">
-            <img :src="logo" width="40" class="mr-3 bdrs-100" />
+            <img :src="logo" class="mr-3 avatar" />
             <div>
               <h2 class="fz-16">{{ info.title || "ChatGPT Demo" }}</h2>
               <p class="gray fz-13">
@@ -148,8 +156,6 @@ import { mapState } from "vuex";
 import { SSE } from "sse";
 import ChatList from "./chat-list.vue";
 import { throttle } from "../../utils/timer";
-// import markdownIt from "markdown-it";
-// import mdHighlight from 'markdown-it-highlightjs'
 import Axios from "axios";
 
 export default {
