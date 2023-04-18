@@ -6,6 +6,13 @@
   max-width: 700px;
   margin: 0 auto;
   padding: 20px;
+  a {
+    text-decoration: none;
+    line-height: 1;
+  }
+  .bdr-1 {
+    border-right: 1px solid;
+  }
 }
 .chat-input {
   border: none;
@@ -35,10 +42,12 @@
       <div class="bg-white">
         <div class="chat-wrap pt-3 pb-3 pos-r">
           <div class="al-c">
-            <img src="img/logo-ai.jpg" width="40" class="mr-3 bdrs-100" />
+            <img :src="logo" width="40" class="mr-3 bdrs-100" />
             <div>
-              <h2 class="fz-16">ChatGPT Demo</h2>
-              <p class="gray fz-13">Based on OpenAI API (gpt-3.5-turbo).</p>
+              <h2 class="fz-16">{{ info.title || "ChatGPT Demo" }}</h2>
+              <p class="gray fz-13">
+                {{ info.desc || "Based on OpenAI API (gpt-3.5-turbo)." }}
+              </p>
             </div>
             <div class="ml-auto">
               <img
@@ -53,7 +62,11 @@
       </div>
       <div class="flex-1 ov-a" ref="chatList" @scroll="onScroll">
         <div class="chat-wrap">
-          <chat-list :list="comboList"></chat-list>
+          <chat-list
+            :list="comboList"
+            :logo="logo"
+            :avatar="info.avatarUser || 'img/avatar.jpg'"
+          ></chat-list>
         </div>
       </div>
       <div class="">
@@ -78,6 +91,20 @@
             <div class="pa-2 ml-1 hover-1" @click="onClear">
               <img src="img/clean.svg" width="20" class="d-b" />
             </div>
+          </div>
+          <div class="mt-2">
+            <a
+              :href="it.link"
+              target="_blank"
+              class="mr-3 d-ib fz-13 white"
+              :class="{
+                'pr-3 bdr-1': i < links.length - 1,
+              }"
+              v-for="(it, i) in links"
+              :key="i"
+            >
+              {{ it.text }}
+            </a>
           </div>
         </div>
       </div>
@@ -123,6 +150,7 @@ import ChatList from "./chat-list.vue";
 import { throttle } from "../../utils/timer";
 // import markdownIt from "markdown-it";
 // import mdHighlight from 'markdown-it-highlightjs'
+import Axios from "axios";
 
 export default {
   components: {
@@ -133,6 +161,7 @@ export default {
       localStorage.apiKey || process.env.VUE_APP_OPENAI_API_KEY || "";
     return {
       inputMsg: "",
+      info: {},
       apiKey,
       newApiKey: apiKey,
       msgList: JSON.parse(localStorage.msgList || "[]"),
@@ -146,6 +175,32 @@ export default {
     ...mapState({
       asMobile: (s) => s.asMobile,
     }),
+    logo() {
+      return this.info.avatarAi || "img/logo-ai.jpg";
+    },
+    links() {
+      const lists = [
+        {
+          text: "Source code",
+          link: "https://github.com/saullary/chatgpt-tpl",
+        },
+        {
+          text: "Deploy with 4everland",
+          link: "https://www.4everland.org",
+        },
+        {
+          text: "Based on OpenAI",
+          link: "https://openai.com/",
+        },
+      ];
+      if (this.info.userName) {
+        lists.unshift({
+          text: "Made by " + this.info.userName,
+          link: this.info.userLink || "javascript:void()",
+        });
+      }
+      return lists;
+    },
     comboList() {
       if (this.lastMsg || this.streaming)
         return [
@@ -166,20 +221,45 @@ export default {
         });
       }
     },
+    apiKey() {
+      localStorage.apiKey = this.apiKey;
+    },
   },
   mounted() {
     setTimeout(() => {
       if (this.msgList.length) this.smoothToBtm(0);
     }, 200);
+    this.getConfig();
   },
   methods: {
+    async getConfig() {
+      try {
+        const { data } = await Axios.get("./config.json");
+        const info = {};
+        for (const key in data) {
+          const arr = data[key];
+          for (const row of arr) {
+            info[row.key] = row.value;
+          }
+        }
+        console.log(info);
+        this.info = info;
+        if (info.apiKey) {
+          this.apiKey = info.apiKey;
+        }
+        if (info.title) {
+          document.title = info.title;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
     onNewApiKey() {
       if (!/^sk-\w{48}$/.test(this.newApiKey)) {
         window.alert("malformed api key");
         return;
       }
       this.apiKey = this.newApiKey;
-      localStorage.apiKey = this.apiKey;
       this.showSetting = false;
     },
     onScroll(e) {

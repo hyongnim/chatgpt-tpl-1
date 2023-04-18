@@ -1,10 +1,22 @@
 {
-  "Page Title": [
+  "Page Info": [
     {
       "type": "text",
       "key": "title",
       "value": "",
-      "placeholder": "Enter Page title"
+      "placeholder": "Enter page title"
+    },
+    {
+      "type": "text",
+      "key": "userName",
+      "value": "",
+      "placeholder": "Enter your name"
+    },
+    {
+      "type": "text",
+      "key": "userLink",
+      "value": "",
+      "placeholder": "Enter your personal link"
     }
   ],
   "OpenAI ApiKey": [
@@ -15,20 +27,18 @@
       "placeholder": "Enter OpenAI ApiKey"
     }
   ],
-  "AI Avatar": [
+  "Avatar": [
     {
       "type": "text",
-      "key": "ai_avatar",
+      "key": "avatarAi",
       "value": "",
-      "placeholder": "Enter AI Avatar URL"
-    }
-  ],
-  "User Avatar": [
+      "placeholder": "Enter AI avatar URL"
+    },
     {
       "type": "text",
-      "key": "user_avatar",
+      "key": "avatarUser",
       "value": "",
-      "placeholder": "Enter User Avatar URL"
+      "placeholder": "Enter user avatar URL"
     }
   ]
 }
