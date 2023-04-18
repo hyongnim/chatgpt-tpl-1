@@ -1,44 +1,56 @@
 {
-  "Page Info": [
+  "Page Title": [
     {
       "type": "text",
       "key": "title",
       "value": "",
       "placeholder": "Enter page title"
-    },
-    {
-      "type": "text",
-      "key": "userName",
-      "value": "",
-      "placeholder": "Enter your name"
-    },
-    {
-      "type": "text",
-      "key": "userLink",
-      "value": "",
-      "placeholder": "Enter your personal link"
     }
   ],
-  "OpenAI ApiKey": [
+  "Bio": [
+    {
+      "type": "text",
+      "key": "bio",
+      "value": "",
+      "placeholder": "Enter the Bio"
+    }
+  ],
+  "OpenAI API Key": [
     {
       "type": "text",
       "key": "apiKey",
       "value": "",
-      "placeholder": "Enter OpenAI ApiKey"
+      "placeholder": "Enter OpenAI API Key"
+    }
+  ],
+  "Logo": [
+    {
+      "type": "text",
+      "key": "logo",
+      "value": "",
+      "placeholder": "Enter logo URL"
     }
   ],
   "Avatar": [
     {
       "type": "text",
-      "key": "avatarAi",
+      "key": "avatar",
       "value": "",
-      "placeholder": "Enter AI avatar URL"
+      "placeholder": "Enter avatar URL"
+    }
+  ],
+  "Button Link": [
+    {
+      "type": "text",
+      "key": "btnName",
+      "value": "",
+      "placeholder": "Enter the button name"
     },
     {
       "type": "text",
-      "key": "avatarUser",
+      "key": "btnLink",
       "value": "",
-      "placeholder": "Enter user avatar URL"
+      "placeholder": "Enter the button link"
     }
   ]
 }

@@ -2,14 +2,15 @@
 .bg-chat {
   background: linear-gradient(135deg, #93c7f5 0%, #c6a8f7 50%, #ffd9ce 100%);
 }
+a {
+  text-decoration: none;
+  line-height: 1;
+  color: #0969da;
+}
 .chat-wrap {
   max-width: 700px;
   margin: 0 auto;
   padding: 20px;
-  a {
-    text-decoration: none;
-    line-height: 1;
-  }
   .bdr-1 {
     border-right: 1px solid;
   }
@@ -51,13 +52,18 @@
         <div class="chat-wrap pt-3 pb-3 pos-r">
           <div class="al-c">
             <img :src="logo" class="mr-3 avatar" />
-            <div>
+            <div class="mr-auto">
               <h2 class="fz-16">{{ info.title || "ChatGPT Demo" }}</h2>
               <p class="gray fz-13">
-                {{ info.desc || "Based on OpenAI API (gpt-3.5-turbo)." }}
+                {{ info.bio || "Based on OpenAI API (gpt-3.5-turbo)." }}
               </p>
             </div>
-            <div class="ml-auto">
+            <div v-if="info.btnLink">
+              <a :href="info.btnLink" target="_blank" class="fz-15">
+                {{ info.btnName || "Link" }}
+              </a>
+            </div>
+            <div class="ml-2">
               <img
                 src="img/key.svg"
                 width="22"
@@ -73,7 +79,7 @@
           <chat-list
             :list="comboList"
             :logo="logo"
-            :avatar="info.avatarUser || 'img/avatar.jpg'"
+            :avatar="info.avatar || 'img/avatar.jpg'"
           ></chat-list>
         </div>
       </div>
@@ -132,7 +138,7 @@
       >
         <div class="chat-wrap">
           <div class="fz-14 mb-2 gray">
-            OpenAI apiKey (Stored in localStorage)
+            OpenAI API Key (Stored in localStorage)
           </div>
           <div class="d-flex">
             <textarea
@@ -175,17 +181,7 @@ export default {
       streaming: false,
       isBtm: true,
       showSetting: false,
-    };
-  },
-  computed: {
-    ...mapState({
-      asMobile: (s) => s.asMobile,
-    }),
-    logo() {
-      return this.info.avatarAi || "img/logo-ai.jpg";
-    },
-    links() {
-      const lists = [
+      links: [
         {
           text: "Source code",
           link: "https://github.com/saullary/chatgpt-tpl",
@@ -198,14 +194,15 @@ export default {
           text: "Based on OpenAI",
           link: "https://openai.com/",
         },
-      ];
-      if (this.info.userName) {
-        lists.unshift({
-          text: "Made by " + this.info.userName,
-          link: this.info.userLink || "javascript:void()",
-        });
-      }
-      return lists;
+      ],
+    };
+  },
+  computed: {
+    ...mapState({
+      asMobile: (s) => s.asMobile,
+    }),
+    logo() {
+      return this.info.logo || "img/logo-ai.jpg";
     },
     comboList() {
       if (this.lastMsg || this.streaming)
@@ -232,9 +229,12 @@ export default {
     },
   },
   mounted() {
-    setTimeout(() => {
-      if (this.msgList.length) this.smoothToBtm(0);
-    }, 200);
+    if (!this.msgList.length) {
+      this.pushMsg("Hello! How can I assist you today?", 2);
+    } else
+      setTimeout(() => {
+        this.smoothToBtm(0);
+      }, 200);
     this.getConfig();
   },
   methods: {
@@ -322,7 +322,7 @@ export default {
             const text = json.choices[0].delta?.content || "";
             this.lastMsg = this.lastMsg + text;
           } else {
-            this.pushMsg(this.lastMsg, "assistant");
+            this.pushMsg(this.lastMsg, 2);
             this.lastMsg = "";
             this.streaming = false;
           }
@@ -350,12 +350,15 @@ export default {
       }
     },
     onErr(msg) {
-      this.pushMsg(msg, "assistant");
+      this.pushMsg(msg, 2);
       this.streaming = false;
       this.lastMsg = "";
       this.smoothToBtm(30);
     },
     pushMsg(content, role = "user") {
+      if (role == 2) {
+        role = "assistant";
+      }
       this.msgList.push({
         content,
         role,

@@ -14,9 +14,6 @@
       font-size: 13px;
       line-height: 1.6;
       word-break: break-word;
-      a {
-        color: #61b0ff;
-      }
       ol {
         padding: 15px 30px;
         padding-right: 10px;
