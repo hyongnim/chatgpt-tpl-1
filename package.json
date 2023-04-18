@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "d": "vue-cli-service serve",
+    "dev": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "b": "vue-cli-service build",
+    "dist": "npm run build && tar -czf dist.tar ./dist",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

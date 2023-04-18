@@ -16,7 +16,7 @@
       "type": "text",
       "key": "userLink",
       "value": "",
-      "placeholder": "Enter your personal Link"
+      "placeholder": "Enter your personal link"
     }
   ],
   "OpenAI ApiKey": [
