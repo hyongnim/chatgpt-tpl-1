@@ -11,7 +11,7 @@
     {
       "type": "text",
       "key": "bio",
-      "value": "",
+      "value": "Based on OpenAI API (gpt-3.5-turbo).",
       "placeholder": "Enter the Bio"
     }
   ],
@@ -50,7 +50,7 @@
       "type": "text",
       "key": "btnLink",
       "value": "",
-      "placeholder": "Enter the button link"
+      "placeholder": "https://"
     }
   ]
 }

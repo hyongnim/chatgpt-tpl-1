@@ -52,13 +52,13 @@ a {
         <div class="chat-wrap pt-3 pb-3 pos-r">
           <div class="al-c">
             <img :src="logo" class="mr-3 avatar" />
-            <div class="mr-auto">
+            <div class="mr-auto shrink-1">
               <h2 class="fz-16">{{ info.title || "ChatGPT Demo" }}</h2>
-              <p class="gray fz-13">
-                {{ info.bio || "Based on OpenAI API (gpt-3.5-turbo)." }}
+              <p class="gray fz-13 mt-1 line-3" v-if="info.bio">
+                {{ info.bio }}
               </p>
             </div>
-            <div v-if="info.btnLink">
+            <div class="ml-2" v-if="info.btnLink">
               <a :href="info.btnLink" target="_blank" class="fz-15">
                 {{ info.btnName || "Link" }}
               </a>
